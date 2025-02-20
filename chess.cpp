@@ -134,10 +134,21 @@ class Square
             row = r;
             col = c;
         }
+        
         void print()
         {
             cout << col << row;
         }
+        
+        unsigned short get_x()
+        {
+            return col - 97;
+        }
+        
+        unsigned short get_y()
+        {
+            return row - 1;
+        }                
 };
 
 class Chessboard
@@ -190,24 +201,49 @@ class Chessboard
             }
             cout << " abcdefgh" << endl;
         }
+        
+        int move(Square s1, Square s2)
+        {
+            unsigned short x1 = s1.get_x();
+            unsigned short y1 = s1.get_y();
+            unsigned short x2 = s2.get_x();
+            unsigned short y2 = s2.get_y();
+            
+            if(!board[y1][x1])
+                return 1;
+            if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
+                return 2;
+            cout << "Hello"<< endl;
+            board[y2][x2] = board[y1][x1];
+            board[y1][x1] = NULL;
+            return 0;
+        }            
 };
 
 
     
 int main()
 {
-    //Chessboard board;
-    //board.draw();
+    Chessboard board;
+    
+    /*board.draw();
     try
     {
-        Square square('-', 1);
+        Square square('e', 2);
         square.print();
+        cout << square.get_x() << square.get_y();
     }
     catch (const char* exp)
     {
         cout << exp << endl;
         return 1;
     }
+    cout << endl;*/
+    Square s('e', 2);
+    Square s1('e', 4);
+    cout << board.move(s, s1) << endl;
+    board.draw();
+    
     
     
     
