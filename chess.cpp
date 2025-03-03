@@ -7,6 +7,8 @@ const short BLACK = 1;
 const short WHITE = 0;
 const short BOARD_SIZE = 8;
 string COLOR[2] = {"white", "black"};
+const short COMMAND_EXIT = 0;
+const short COMMAND_MOVE = 1;
 
 class Piece 
 {   
@@ -34,7 +36,10 @@ class Pawn : public Piece
         
         void draw()
         {
-            cout << "P";
+            if(color == WHITE)
+                cout << "♙";
+            else
+                cout << "♟";
         }
 };
 
@@ -50,7 +55,10 @@ class Rook : public Piece
         
         void draw()
         {
-            cout << "R";
+            if(color == WHITE)
+                cout << "♖";
+            else
+                cout << "♜";
         }
 };
 
@@ -66,7 +74,10 @@ class Bishop : public Piece
         
         void draw()
         {
-            cout << "B";
+            if(color == WHITE)
+                cout << "♗";
+            else
+                cout << "♝";
         }
 };
 
@@ -82,7 +93,10 @@ class Knight : public Piece
         
         void draw()
         {
-            cout << "k";
+            if(color == WHITE)
+                cout << "♘";
+            else
+                cout << "♞";
         }
 };
 
@@ -98,7 +112,10 @@ class Queen : public Piece
         
         void draw()
         {
-            cout << "Q";
+            if(color == WHITE)
+                cout << "♕";
+            else
+                cout << "♛";
         }
 };
 
@@ -114,7 +131,10 @@ class King : public Piece
         
         void draw()
         {
-            cout << "K";
+            if(color == WHITE)
+                cout << "♔";
+            else
+                cout << "♚";
         }
 };
 
@@ -189,6 +209,7 @@ class Chessboard
         
         void draw()
         {
+            cout << " abcdefgh" << endl;
             for(short i = BOARD_SIZE - 1; i >= 0; i--)
             {
                 cout << i + 1;
@@ -213,40 +234,66 @@ class Chessboard
                 return 1;
             if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
                 return 2;
-            cout << "Hello"<< endl;
             board[y2][x2] = board[y1][x1];
             board[y1][x1] = NULL;
             return 0;
         }            
 };
 
-
+short get_command(Square &s)
+{
+    string command;
+    char row, col;
+    while(1)
+    {
+        cin >> command;
+        for(short i = 0; i < command.length(); i++)
+            command[i] = tolower(command[i]);
+        if(command == "exit")
+            return COMMAND_EXIT;
+        if(command.length() != 2)
+            cout << "Invalid command. Try again." << endl;
+        else
+        {
+            col = command[0];
+            row = command[1];
+            if(row > '9' || row < '0')
+            {
+                cout << "Invalid command. Try again." << endl; 
+                continue;
+            }
+            try
+            {
+                s = Square(col, row - 48);
+                return COMMAND_MOVE;
+            }
+            catch (const char* exp)
+            {
+               cout << exp << " Try again." << endl;
+            }                      
+        }
+    }
+    
+}
     
 int main()
 {
     Chessboard board;
+        
+    Square s1('e', 2);
+    Square s2('e', 4);
     
-    /*board.draw();
-    try
+    while(1)
     {
-        Square square('e', 2);
-        square.print();
-        cout << square.get_x() << square.get_y();
-    }
-    catch (const char* exp)
-    {
-        cout << exp << endl;
-        return 1;
-    }
-    cout << endl;*/
-    Square s('e', 2);
-    Square s1('e', 4);
-    cout << board.move(s, s1) << endl;
-    board.draw();
-    
-    
-    
-    
+        board.draw();
+        cout << "Enter square(or exit):";
+        if(get_command(s1) == COMMAND_EXIT)
+            break;
+        cout << "Enter square(or exit):";
+        if(get_command(s2) == COMMAND_EXIT)
+            break;            
+        board.move(s1, s2);        
+    }    
     
     return 0;
 }
