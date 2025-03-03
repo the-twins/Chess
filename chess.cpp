@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -275,7 +276,8 @@ short get_command(Square &s)
     }
     
 }
-    
+
+
 int main()
 {
     Chessboard board;
@@ -285,6 +287,7 @@ int main()
     
     while(1)
     {
+        system("clear");  
         board.draw();
         cout << "Enter square(or exit):";
         if(get_command(s1) == COMMAND_EXIT)
@@ -292,7 +295,7 @@ int main()
         cout << "Enter square(or exit):";
         if(get_command(s2) == COMMAND_EXIT)
             break;            
-        board.move(s1, s2);        
+        board.move(s1, s2);
     }    
     
     return 0;
