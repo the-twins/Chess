@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 const short BLACK = 1;
 const short WHITE = 0;
 const short BOARD_SIZE = 8;
@@ -11,133 +12,6 @@ string COLOR[2] = {"white", "black"};
 const short COMMAND_EXIT = 0;
 const short COMMAND_MOVE = 1;
 
-class Piece 
-{   
-    public:
-        short color;
-        
-        Piece(short col)
-        {
-            color = col;
-        }
-        
-        virtual void get_name() = 0;
-        virtual void draw() = 0;
-};
-
-class Pawn : public Piece
-{
-    public:
-        Pawn(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " Pawn";
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♙";
-            else
-                cout << "♟";
-        }
-};
-
-class Rook : public Piece
-{
-    public:
-        Rook(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " Rook";   
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♖";
-            else
-                cout << "♜";
-        }
-};
-
-class Bishop : public Piece
-{
-    public:
-        Bishop(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " Bishop";   
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♗";
-            else
-                cout << "♝";
-        }
-};
-
-class Knight : public Piece
-{
-    public:
-        Knight(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " Knight";   
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♘";
-            else
-                cout << "♞";
-        }
-};
-
-class Queen : public Piece
-{
-    public:
-        Queen(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " Queen";   
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♕";
-            else
-                cout << "♛";
-        }
-};
-
-class King : public Piece
-{
-    public:
-        King(short col) : Piece(col) {}
-            
-        void get_name()
-        {
-            cout << COLOR[color] << " King";   
-        }
-        
-        void draw()
-        {
-            if(color == WHITE)
-                cout << "♔";
-            else
-                cout << "♚";
-        }
-};
 
 class Square
 {
@@ -145,7 +19,7 @@ class Square
     char col;
  
     public:
-        Square(char c, unsigned short r)
+        Square(char c = 'a', unsigned short r = 1)
         {
             c = tolower(c);
             if(r > 8 || r < 1)
@@ -169,8 +43,202 @@ class Square
         unsigned short get_y()
         {
             return row - 1;
-        }                
+        }
+
+        char get_col()
+        {
+            return col;
+        }
+
+        unsigned short get_row()
+        {
+            return row;
+        }            
 };
+
+class Piece 
+{   
+    public:
+        short color;
+        
+        Piece(short col)
+        {
+            color = col;
+        }
+        
+        virtual void get_name() = 0;
+        virtual void draw() = 0;
+        virtual unsigned short get_trajectory(Square s1, Square s2, Square * trajectory) = 0;
+};
+
+class Pawn : public Piece
+{
+    public:
+        Pawn(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " Pawn";
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♙";
+            else
+                cout << "♟";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            return 1;
+        }
+};
+
+class Rook : public Piece
+{
+    public:
+        Rook(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " Rook";   
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♖";
+            else
+                cout << "♜";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            return 1;
+        }
+};
+
+class Bishop : public Piece
+{
+    public:
+        Bishop(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " Bishop";   
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♗";
+            else
+                cout << "♝";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            return 1;
+        }
+};
+
+class Knight : public Piece
+{
+    public:
+        Knight(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " Knight";   
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♘";
+            else
+                cout << "♞";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            return 1;
+        }
+};
+
+class Queen : public Piece
+{
+    public:
+        Queen(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " Queen";   
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♕";
+            else
+                cout << "♛";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            return 1;
+        }
+};
+
+class King : public Piece
+{
+    public:
+        King(short col) : Piece(col) {}
+            
+        void get_name()
+        {
+            cout << COLOR[color] << " King";   
+        }
+        
+        void draw()
+        {
+            if(color == WHITE)
+                cout << "♔";
+            else
+                cout << "♚";
+        }
+        
+        unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
+        {
+            unsigned short row1 = s1.get_row();
+            unsigned short row2 = s2.get_row();
+            char col1 = s1.get_col();
+            char col2 = s2.get_col();
+            if(abs(row1 - row2) > 1 || abs(col1 - col2) > 1)
+                return 0;
+            if(row1 == row2 && col1 == col2)
+            {
+                trajectory[0] = s1;
+                return 1;
+            }
+            else
+            {
+                trajectory[0] = s1;
+                trajectory[1] = s2;
+                return 2;
+            }
+        }
+};
+
+void print_trajectoty(Square t[], unsigned short n)
+{
+    for(unsigned short i = 0; i < n; i++)
+    {
+        t[i].print();
+        cout << endl;
+    }
+}
 
 class Chessboard
 {
@@ -210,7 +278,8 @@ class Chessboard
         
         void draw()
         {
-            cout << " abcdefgh" << endl;
+            cout << "\033[30m" << "\033[47m";
+            cout << " abcdefgh " << endl;
             for(short i = BOARD_SIZE - 1; i >= 0; i--)
             {
                 cout << i + 1;
@@ -219,9 +288,10 @@ class Chessboard
                         board[i][j]->draw();
                     else
                         cout << ".";
-                cout << endl;
+                cout << ' '<< endl;
             }
-            cout << " abcdefgh" << endl;
+            cout << " abcdefgh " << endl;
+            cout << "\033[0m" << "\033[0m";
         }
         
         int move(Square s1, Square s2)
@@ -230,13 +300,22 @@ class Chessboard
             unsigned short y1 = s1.get_y();
             unsigned short x2 = s2.get_x();
             unsigned short y2 = s2.get_y();
+            Square trajectory[8];
+            unsigned short trajectory_len;
             
             if(!board[y1][x1])
                 return 1;
-            if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
-                return 2;
-            board[y2][x2] = board[y1][x1];
-            board[y1][x1] = NULL;
+            /*if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
+                return 2;*/
+            if(trajectory_len = board[y1][x1]->get_trajectory(s1, s2, trajectory))
+            {
+                board[y2][x2] = board[y1][x1];
+                board[y1][x1] = NULL;
+                print_trajectoty(trajectory, trajectory_len);
+                getchar();
+                getchar();
+            }
+            
             return 0;
         }            
 };
@@ -274,9 +353,7 @@ short get_command(Square &s)
             }                      
         }
     }
-    
 }
-
 
 int main()
 {
@@ -296,7 +373,7 @@ int main()
         if(get_command(s2) == COMMAND_EXIT)
             break;            
         board.move(s1, s2);
-    }    
-    
+    }
+
     return 0;
 }
