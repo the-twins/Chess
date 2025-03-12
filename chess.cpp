@@ -190,7 +190,61 @@ class Bishop : public Piece
         
         unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
         {
-            return 1;
+            unsigned short row1 = s1.get_row();
+            unsigned short row2 = s2.get_row();
+            char col1 = s1.get_col();
+            char col2 = s2.get_col();
+            unsigned short traj_row = abs(row1 - row2);
+            unsigned short traj_col = abs(col1 - col2);
+            if(row1 == row2 && col1 == col2)
+            {
+                trajectory[0] = s1;
+                return 1;
+            }
+            if(traj_col == traj_row)
+            {
+                if(col1 < col2 && row1 < row2)
+                {
+                    for(unsigned short i = 0; i < traj_col + 1; i++)
+                    {
+                        trajectory[i] = Square(col1, row1);
+                        row1++;
+                        col1++;
+                    }
+                    return traj_col + 1;
+                }
+                if(col1 > col2 && row1 > row2)
+                {
+                    for(unsigned short i = 0; i < traj_col + 1; i++)
+                    {
+                        trajectory[i] = Square(col1, row1);
+                        col1--;
+                        row1--;
+                    }
+                    return traj_col + 1;
+                }
+                if(col1 < col2 && row1 > row2)
+                {
+                    for(unsigned short i = 0; i < traj_col + 1; i++)
+                    {
+                        trajectory[i] = Square(col1, row1);
+                        col1++;
+                        row1--;
+                    }
+                    return traj_col + 1;
+                }
+                if(col1 > col2 && row1 < row2)
+                {
+                    for(unsigned short i = 0; i < traj_col + 1; i++)
+                    {
+                        trajectory[i] = Square(col1, row1);
+                        col1--;
+                        row1++;
+                    }
+                    return traj_col + 1;
+                }
+            }
+            return 0;
         }
 };
 
