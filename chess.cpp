@@ -268,7 +268,25 @@ class Knight : public Piece
         
         unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
         {
-            return 1;
+            unsigned short row1 = s1.get_row();
+            unsigned short row2 = s2.get_row();
+            char col1 = s1.get_col();
+            char col2 = s2.get_col();
+            unsigned short traj_row = abs(row1 - row2);
+            unsigned short traj_col = abs(col1 - col2);
+            
+            if(row1 == row2 && col1 == col2)
+            {
+                trajectory[0] = s1;
+                return 1;
+            }
+            if(traj_row == 1 && traj_col == 2 || traj_row == 2 && traj_col == 1)
+            {
+                trajectory[0] = s1;
+                trajectory[1] = s2;
+                return 2;
+            }
+            return 0;
         }
 };
 
