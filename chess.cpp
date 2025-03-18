@@ -91,7 +91,44 @@ class Pawn : public Piece
         
         unsigned short get_trajectory(Square s1, Square s2, Square * trajectory)
         {
-            return 1;
+            unsigned short row1 = s1.get_row();
+            unsigned short row2 = s2.get_row();
+            char col1 = s1.get_col();
+            char col2 = s2.get_col();
+            short traj_row = row1 - row2;
+            short traj_col = col1 - col2;
+            if(row1 == row2 && col1 == col2)
+            {
+                trajectory[0] = s1;
+                return 1;
+            }
+            if(color == BLACK && row1 == 7 && abs(traj_row) == 2)
+            {
+                trajectory[0] = s1;
+                trajectory[1] = Square(col1, row2 + 1);
+                trajectory[2] = s2;
+                return 3;
+            }
+            if(color == WHITE && row1 == 2 && abs(traj_row) == 2)
+            {
+                trajectory[0] = s1;
+                trajectory[1] = Square(col1, row2 - 1);
+                trajectory[2] = s2;
+                return 3;
+            }
+            if(color == WHITE && traj_row == -1 && abs(traj_col) < 2)
+            {
+                trajectory[0] = s1;
+                trajectory[1] = s2;
+                return 2;
+            }
+            if(color == BLACK && traj_row == 1 && abs(traj_col) < 2)
+            {
+                trajectory[0] = s1;
+                trajectory[1] = s2;
+                return 2;
+            }                
+            return 0;                
         }
 };
 
