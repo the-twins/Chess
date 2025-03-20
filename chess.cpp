@@ -11,7 +11,9 @@ const short BOARD_SIZE = 8;
 string COLOR[2] = {"white", "black"};
 const short COMMAND_EXIT = 0;
 const short COMMAND_MOVE = 1;
-
+const short MOVE_SUCCESS = 0;
+const short MOVE_FAIL = 1;
+const short MOVE_CANCEL = 2;
 
 class Square
 {
@@ -551,29 +553,35 @@ class Chessboard
             cout << "\033[0m" << "\033[0m";
         }
         
-        int move(Square s1, Square s2)
+        short move(Square s1, Square s2)
         {
             unsigned short x1 = s1.get_x();
             unsigned short y1 = s1.get_y();
             unsigned short x2 = s2.get_x();
             unsigned short y2 = s2.get_y();
             Square trajectory[8];
-            unsigned short trajectory_len;
-            
+            unsigned short trajectory_len = 0;
             if(!board[y1][x1])
-                return 1;
-            /*if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
-                return 2;*/
+                return MOVE_FAIL;
             if(trajectory_len = board[y1][x1]->get_trajectory(s1, s2, trajectory))
             {
+                if(trajectory_len == 1)
+                    return MOVE_CANCEL;
+                if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
+                    return MOVE_FAIL;
+                for(short i = 1; i < trajectory_len - 1; i++)
+                {
+                    if(board[trajectory[i].get_y()][trajectory[i].get_x()] != NULL)
+                    {
+                        return MOVE_FAIL;
+                    }
+                }
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
                 print_trajectoty(trajectory, trajectory_len);
-                getchar();
-                getchar();
+                return MOVE_SUCCESS;
             }
-            
-            return 0;
+            return MOVE_FAIL;
         }            
 };
 
@@ -628,8 +636,16 @@ int main()
             break;
         cout << "Enter square(or exit):";
         if(get_command(s2) == COMMAND_EXIT)
-            break;            
-        board.move(s1, s2);
+            break; 
+        short ans = board.move(s1, s2);      
+        if(ans == MOVE_CANCEL)
+            cout << "Move canceled" << endl;
+        if(ans == MOVE_FAIL)
+            cout << "Invalid move" << endl;
+        if(ans == MOVE_SUCCESS)
+            cout << "Move done" << endl;
+        getchar();
+        getchar();
     }
 
     return 0;
