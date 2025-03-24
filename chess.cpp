@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <typeinfo>
 
 using namespace std;
 
@@ -565,6 +566,13 @@ class Chessboard
                 return MOVE_FAIL;
             if(trajectory_len = board[y1][x1]->get_trajectory(s1, s2, trajectory))
             {
+                if(dynamic_cast<Pawn*>(board[y1][x1]))
+                {
+                    if(x2 != x1 && board[y2][x2] == NULL)
+                        return MOVE_FAIL;
+                    if(x1 == x2 && board[y2][x2])
+                        return MOVE_FAIL;
+                }
                 if(trajectory_len == 1)
                     return MOVE_CANCEL;
                 if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
