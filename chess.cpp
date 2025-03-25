@@ -584,13 +584,23 @@ class Chessboard
                         return MOVE_FAIL;
                     }
                 }
+                board[y1][x1]->get_name();
+                cout << " ";
+                s1.print();
+                cout << " -> ";
+                s2.print();
+                if(board[y2][x2] != NULL)
+                {                    
+                    cout << " capture ";
+                    board[y2][x2]->get_name();
+                }
+                cout << endl;   
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
-                print_trajectoty(trajectory, trajectory_len);
                 return MOVE_SUCCESS;
             }
             return MOVE_FAIL;
-        }            
+        }
 };
 
 short get_command(Square &s)
@@ -650,8 +660,6 @@ int main()
             cout << "Move canceled" << endl;
         if(ans == MOVE_FAIL)
             cout << "Invalid move" << endl;
-        if(ans == MOVE_SUCCESS)
-            cout << "Move done" << endl;
         getchar();
         getchar();
     }
