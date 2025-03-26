@@ -503,6 +503,7 @@ void print_trajectoty(Square t[], unsigned short n)
 class Chessboard
 {
     Piece * board[BOARD_SIZE][BOARD_SIZE];
+    unsigned short turn;
     
     public:
         Chessboard()
@@ -534,6 +535,13 @@ class Chessboard
             for(short i = 2; i < 6; i++)
                 for(short j = 0; j < BOARD_SIZE; j++)
                     board[i][j] = NULL;
+                
+            turn = WHITE;
+        }
+        
+        unsigned short get_turn()
+        {
+            return turn;
         }
         
         void draw()
@@ -562,7 +570,7 @@ class Chessboard
             unsigned short y2 = s2.get_y();
             Square trajectory[8];
             unsigned short trajectory_len = 0;
-            if(!board[y1][x1])
+            if(!board[y1][x1] || board[y1][x1]->color != turn)
                 return MOVE_FAIL;
             if(trajectory_len = board[y1][x1]->get_trajectory(s1, s2, trajectory))
             {
@@ -597,6 +605,10 @@ class Chessboard
                 cout << endl;   
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
+                if(turn == WHITE)
+                    turn = BLACK;
+                else
+                    turn = WHITE;
                 return MOVE_SUCCESS;
             }
             return MOVE_FAIL;
@@ -649,6 +661,10 @@ int main()
     {
         system("clear");  
         board.draw();
+        if(board.get_turn() == WHITE)
+            cout << "White's move" << endl;
+        else
+            cout << "Black's move" << endl;
         cout << "Enter square(or exit):";
         if(get_command(s1) == COMMAND_EXIT)
             break;
