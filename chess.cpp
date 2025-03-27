@@ -12,6 +12,8 @@ const short BOARD_SIZE = 8;
 string COLOR[2] = {"white", "black"};
 const short COMMAND_EXIT = 0;
 const short COMMAND_MOVE = 1;
+const short COMMAND_SHORT_CASTLE = 2;
+const short COMMAND_LONG_CASTLE = 3;
 const short MOVE_SUCCESS = 0;
 const short MOVE_FAIL = 1;
 const short MOVE_CANCEL = 2;
@@ -562,6 +564,12 @@ class Chessboard
             cout << "\033[0m" << "\033[0m";
         }
         
+        short castle(short side)
+        {
+            cout << side << endl;
+            return MOVE_SUCCESS;
+        }
+        
         short move(Square s1, Square s2)
         {
             unsigned short x1 = s1.get_x();
@@ -626,6 +634,10 @@ short get_command(Square &s)
             command[i] = tolower(command[i]);
         if(command == "exit")
             return COMMAND_EXIT;
+        if(command == "short-castle")
+            return COMMAND_SHORT_CASTLE;
+        if(command == "long-castle")
+            return COMMAND_LONG_CASTLE;
         if(command.length() != 2)
             cout << "Invalid command. Try again." << endl;
         else
@@ -661,16 +673,33 @@ int main()
     {
         system("clear");  
         board.draw();
+        short command;
         if(board.get_turn() == WHITE)
             cout << "White's move" << endl;
         else
             cout << "Black's move" << endl;
         cout << "Enter square(or exit):";
-        if(get_command(s1) == COMMAND_EXIT)
+        command = get_command(s1);
+        if(command == COMMAND_EXIT)
             break;
+        if(command == COMMAND_LONG_CASTLE || command == COMMAND_SHORT_CASTLE)
+        {
+            board.castle(command);
+            getchar();
+            getchar();
+            continue;
+        }
         cout << "Enter square(or exit):";
-        if(get_command(s2) == COMMAND_EXIT)
-            break; 
+        command = get_command(s2);
+        if(command == COMMAND_EXIT)
+            break;
+        if(command == COMMAND_LONG_CASTLE || command == COMMAND_SHORT_CASTLE)
+        {
+            cout << "Invalid move" << endl;
+            getchar();
+            getchar();
+            continue;
+        }      
         short ans = board.move(s1, s2);      
         if(ans == MOVE_CANCEL)
             cout << "Move canceled" << endl;
