@@ -566,7 +566,41 @@ class Chessboard
         
         short castle(short side)
         {
-            cout << side << endl;
+            if(turn == WHITE && side == COMMAND_LONG_CASTLE)
+            {
+                board[0][2] = board[0][4];
+                board[0][4] = NULL; 
+                board[0][3] = board[0][0];
+                board[0][0] = NULL;
+            }
+            if(turn == WHITE && side == COMMAND_SHORT_CASTLE)
+            {
+                
+                board[0][6] = board[0][4];
+                board[0][4] = NULL; 
+                board[0][5] = board[0][7];
+                board[0][7] = NULL;
+            }
+            if(turn == BLACK && side == COMMAND_LONG_CASTLE)
+            {
+                 
+                board[7][2] = board[7][4];
+                board[7][4] = NULL;
+                board[7][3] = board[7][0];
+                board[7][0] = NULL;
+            }
+            if(turn == BLACK && side == COMMAND_SHORT_CASTLE)
+            {
+                 
+                board[7][6] = board[7][4];
+                board[7][4] = NULL;
+                board[7][5] = board[7][7];
+                board[7][7] = NULL;
+            }
+            if(turn == WHITE)
+                turn = BLACK;
+            else
+                turn = WHITE;
             return MOVE_SUCCESS;
         }
         
@@ -685,7 +719,6 @@ int main()
         if(command == COMMAND_LONG_CASTLE || command == COMMAND_SHORT_CASTLE)
         {
             board.castle(command);
-            getchar();
             getchar();
             continue;
         }
