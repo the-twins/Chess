@@ -568,6 +568,11 @@ class Chessboard
         {
             if(turn == WHITE && side == COMMAND_LONG_CASTLE)
             {
+                for(short i = 1; i < 4; i++)
+                {
+                    if(board[0][i] != NULL)
+                        return MOVE_FAIL;
+                }
                 board[0][2] = board[0][4];
                 board[0][4] = NULL; 
                 board[0][3] = board[0][0];
@@ -575,7 +580,11 @@ class Chessboard
             }
             if(turn == WHITE && side == COMMAND_SHORT_CASTLE)
             {
-                
+                for(short i = 5; i < 7; i++)
+                {
+                    if(board[0][i] != NULL)
+                        return MOVE_FAIL;
+                }
                 board[0][6] = board[0][4];
                 board[0][4] = NULL; 
                 board[0][5] = board[0][7];
@@ -583,7 +592,11 @@ class Chessboard
             }
             if(turn == BLACK && side == COMMAND_LONG_CASTLE)
             {
-                 
+                for(short i = 1; i < 4; i++)
+                {
+                    if(board[7][i] != NULL)
+                        return MOVE_FAIL;
+                } 
                 board[7][2] = board[7][4];
                 board[7][4] = NULL;
                 board[7][3] = board[7][0];
@@ -591,7 +604,11 @@ class Chessboard
             }
             if(turn == BLACK && side == COMMAND_SHORT_CASTLE)
             {
-                 
+                for(short i = 5; i < 7; i++)
+                {
+                    if(board[7][i] != NULL)
+                        return MOVE_FAIL;
+                } 
                 board[7][6] = board[7][4];
                 board[7][4] = NULL;
                 board[7][5] = board[7][7];
@@ -718,7 +735,16 @@ int main()
             break;
         if(command == COMMAND_LONG_CASTLE || command == COMMAND_SHORT_CASTLE)
         {
-            board.castle(command);
+            if(board.castle(command) == MOVE_SUCCESS)
+            {
+                cout << "Success castle" << endl;
+                getchar();
+            }
+            else
+            {
+                cout << "Can not castle" << endl;
+                getchar();
+            }
             getchar();
             continue;
         }
