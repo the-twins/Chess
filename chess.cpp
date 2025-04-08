@@ -506,6 +506,10 @@ class Chessboard
 {
     Piece * board[BOARD_SIZE][BOARD_SIZE];
     unsigned short turn;
+    bool white_short_castle;
+    bool black_long_castle;
+    bool black_short_castle;
+    bool white_long_castle;
     
     public:
         Chessboard()
@@ -526,7 +530,7 @@ class Chessboard
             board[7][4] = new King(BLACK);
             board[7][5] = new Bishop(BLACK);
             board[7][6] = new Knight(BLACK);
-            board[7][7] = new Rook(BLACK);
+            board[7][7] = new Rook(BLACK); 
             
             for(short i = 0; i < BOARD_SIZE; i++)
             {
@@ -539,6 +543,10 @@ class Chessboard
                     board[i][j] = NULL;
                 
             turn = WHITE;
+            white_short_castle = true;
+            black_long_castle = true;
+            black_short_castle = true;
+            white_long_castle = true;
         }
         
         unsigned short get_turn()
@@ -568,56 +576,97 @@ class Chessboard
         {
             if(turn == WHITE && side == COMMAND_LONG_CASTLE)
             {
+                if(!white_long_castle)
+                    return MOVE_FAIL;
                 for(short i = 1; i < 4; i++)
                 {
                     if(board[0][i] != NULL)
+                        return MOVE_FAIL;
+                }
+                for(short i = 0; i < 5; i++)
+                {
+                    Square s(i + 97, 1);
+                    if(is_under_attack(s, BLACK))
                         return MOVE_FAIL;
                 }
                 board[0][2] = board[0][4];
                 board[0][4] = NULL; 
                 board[0][3] = board[0][0];
                 board[0][0] = NULL;
+                white_short_castle = false;
+                white_long_castle = false;
             }
             if(turn == WHITE && side == COMMAND_SHORT_CASTLE)
             {
+                if(!white_short_castle)
+                    return MOVE_FAIL;
                 for(short i = 5; i < 7; i++)
                 {
                     if(board[0][i] != NULL)
+                        return MOVE_FAIL;
+                }
+                for(short i = 4; i < 8; i++)
+                {
+                    Square s(i + 97, 1);
+                    if(is_under_attack(s, BLACK))
                         return MOVE_FAIL;
                 }
                 board[0][6] = board[0][4];
                 board[0][4] = NULL; 
                 board[0][5] = board[0][7];
                 board[0][7] = NULL;
+                white_short_castle = false;
+                white_long_castle = false;
             }
             if(turn == BLACK && side == COMMAND_LONG_CASTLE)
             {
+                if(!black_long_castle)
+                    return MOVE_FAIL;
                 for(short i = 1; i < 4; i++)
                 {
                     if(board[7][i] != NULL)
                         return MOVE_FAIL;
-                } 
+                }
+                for(short i = 0; i < 5; i++)
+                {
+                    Square s(i + 97, 8);
+                    if(is_under_attack(s, WHITE))
+                        return MOVE_FAIL;
+                }
                 board[7][2] = board[7][4];
                 board[7][4] = NULL;
                 board[7][3] = board[7][0];
                 board[7][0] = NULL;
+                black_short_castle = false;
+                black_long_castle = false;
             }
             if(turn == BLACK && side == COMMAND_SHORT_CASTLE)
             {
+                if(!black_short_castle)
+                    return MOVE_FAIL;
                 for(short i = 5; i < 7; i++)
                 {
                     if(board[7][i] != NULL)
                         return MOVE_FAIL;
                 } 
+                for(short i = 4; i < 8; i++)
+                {
+                    Square s(i + 97, 8);
+                    if(is_under_attack(s, WHITE))
+                        return MOVE_FAIL;
+                }
                 board[7][6] = board[7][4];
                 board[7][4] = NULL;
                 board[7][5] = board[7][7];
                 board[7][7] = NULL;
+                black_short_castle = false;
+                black_long_castle = false;
             }
             if(turn == WHITE)
                 turn = BLACK;
             else
                 turn = WHITE;
+                
             return MOVE_SUCCESS;
         }
         
@@ -661,7 +710,25 @@ class Chessboard
                     cout << " capture ";
                     board[y2][x2]->get_name();
                 }
-                cout << endl;   
+                cout << endl;
+                if(board[y1][x1] == board[0][4] || board[y2][x2] == board[0][4])
+                {
+                    white_short_castle = false;
+                    white_long_castle = false;
+                }
+                if(board[y1][x1] == board[7][4] || board[y2][x2] == board[7][4])
+                {
+                    black_long_castle = false;
+                    black_short_castle = false;
+                }
+                if(board[y1][x1] == board[0][0] || board[y2][x2] == board[0][0])
+                    white_long_castle = false;
+                if(board[y1][x1] == board[0][7] || board[y2][x2] == board[0][7])
+                    white_short_castle = false;
+                if(board[y1][x1] == board[7][0] || board[y2][x2] == board[7][0])
+                    black_long_castle = false;
+                if(board[y1][x1] == board[7][7] || board[y2][x2] == board[7][7])
+                   black_short_castle = false;              
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
                 if(turn == WHITE)
@@ -672,6 +739,31 @@ class Chessboard
             }
             return MOVE_FAIL;
         }
+
+        bool is_under_attack(Square s1, short c)
+        {
+            unsigned short len;
+            bool piece;
+            Square trajectory[8];
+            for(short y = 0; y < 8; y++)
+                for(short x = 0; x < 8; x++)
+                    if(board[y][x] && board[y][x]->color == c)
+                    {
+                        piece = false;
+                        Square s2(x + 97, y + 1);
+                        len = board[y][x]->get_trajectory(s2, s1, trajectory);
+                        if(len == 0 || len == 1)
+                            continue;
+                        for(short i = 1; i < len - 1; i++)
+                        {
+                            if(board[trajectory[i].get_y()][trajectory[i].get_x()])
+                                piece = true;
+                        }
+                        if(piece == false)
+                            return true;
+                    }
+            return false;
+        }         
 };
 
 short get_command(Square &s)
