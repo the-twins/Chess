@@ -530,18 +530,18 @@ class Chessboard
             board[7][4] = new King(BLACK);
             board[7][5] = new Bishop(BLACK);
             board[7][6] = new Knight(BLACK);
-            board[7][7] = new Rook(BLACK); 
-            
+            board[7][7] = new Rook(BLACK);
+
             for(short i = 0; i < BOARD_SIZE; i++)
             {
                 board[1][i] = new Pawn(WHITE);
                 board[6][i] = new Pawn(BLACK);
             }
-            
+
             for(short i = 2; i < 6; i++)
                 for(short j = 0; j < BOARD_SIZE; j++)
                     board[i][j] = NULL;
-                
+
             turn = WHITE;
             white_short_castle = true;
             black_long_castle = true;
@@ -583,7 +583,7 @@ class Chessboard
                     if(board[0][i] != NULL)
                         return MOVE_FAIL;
                 }
-                for(short i = 0; i < 5; i++)
+                for(short i = 2; i < 5; i++)
                 {
                     Square s(i + 97, 1);
                     if(is_under_attack(s, BLACK))
@@ -605,7 +605,7 @@ class Chessboard
                     if(board[0][i] != NULL)
                         return MOVE_FAIL;
                 }
-                for(short i = 4; i < 8; i++)
+                for(short i = 4; i < 7; i++)
                 {
                     Square s(i + 97, 1);
                     if(is_under_attack(s, BLACK))
@@ -627,7 +627,7 @@ class Chessboard
                     if(board[7][i] != NULL)
                         return MOVE_FAIL;
                 }
-                for(short i = 0; i < 5; i++)
+                for(short i = 2; i < 5; i++)
                 {
                     Square s(i + 97, 8);
                     if(is_under_attack(s, WHITE))
@@ -649,7 +649,7 @@ class Chessboard
                     if(board[7][i] != NULL)
                         return MOVE_FAIL;
                 } 
-                for(short i = 4; i < 8; i++)
+                for(short i = 4; i < 7; i++)
                 {
                     Square s(i + 97, 8);
                     if(is_under_attack(s, WHITE))
@@ -760,7 +760,11 @@ class Chessboard
                                 piece = true;
                         }
                         if(piece == false)
+                        {
+                            if(dynamic_cast<Pawn*>(board[y][x]) && x == s1.get_x())
+                                continue;
                             return true;
+                        }
                     }
             return false;
         }         
@@ -808,9 +812,10 @@ short get_command(Square &s)
 int main()
 {
     Chessboard board;
-        
+    
     Square s1('e', 2);
     Square s2('e', 4);
+
     
     while(1)
     {
