@@ -514,6 +514,10 @@ class Chessboard
     public:
         Chessboard()
         {
+            for(short i = 0; i < 8; i++)
+                for(short j = 0; j < BOARD_SIZE; j++)
+                    board[i][j] = NULL;
+            
             board[0][0] = new Rook(WHITE);
             board[0][1] = new Knight(WHITE);
             board[0][2] = new Bishop(WHITE);
@@ -531,7 +535,7 @@ class Chessboard
             board[7][5] = new Bishop(BLACK);
             board[7][6] = new Knight(BLACK);
             board[7][7] = new Rook(BLACK);
-
+                        
             for(short i = 0; i < BOARD_SIZE; i++)
             {
                 board[1][i] = new Pawn(WHITE);
@@ -541,7 +545,9 @@ class Chessboard
             for(short i = 2; i < 6; i++)
                 for(short j = 0; j < BOARD_SIZE; j++)
                     board[i][j] = NULL;
-
+            
+            board[6][0] = new Pawn(WHITE);
+            
             turn = WHITE;
             white_short_castle = true;
             black_long_castle = true;
@@ -728,9 +734,21 @@ class Chessboard
                 if(board[y1][x1] == board[7][0] || board[y2][x2] == board[7][0])
                     black_long_castle = false;
                 if(board[y1][x1] == board[7][7] || board[y2][x2] == board[7][7])
-                   black_short_castle = false;              
+                    black_short_castle = false;               
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
+                if(dynamic_cast<Pawn*>(board[y2][x2]) && y2 == 7 && board[y2][x2]->color == WHITE)
+                {
+                   board[y2][x2] = promote(WHITE);
+                   cout << "White Pawn promoted to ";
+                   board[y2][x2]->get_name();
+                }
+                if(dynamic_cast<Pawn*>(board[y2][x2]) && y2 == 0 && board[y2][x2]->color == BLACK)
+                {
+                   board[y2][x2] = promote(BLACK);
+                   cout << "Black Pawn promoted to ";
+                   board[y2][x2]->get_name();
+                }
                 if(turn == WHITE)
                     turn = BLACK;
                 else
@@ -767,7 +785,35 @@ class Chessboard
                         }
                     }
             return false;
-        }         
+        }
+
+        Piece * promote(short col)
+        {
+            char ch;
+            Piece *piece = NULL;
+            
+            cout << "Choose a piece for promotion." << endl;
+            cout << "b) Bishop   k) Knight" << endl;
+            cout << "q) Queen    r) Rook" << endl;
+            cout << "Enter b, k, q or r: ";
+            while(!piece)
+            {
+                cin >> ch;
+                ch = toupper(ch);
+                if(ch == 'B')
+                    piece = new Bishop(col);
+                else if(ch == 'K')
+                    piece = new Knight(col);
+                else if(ch == 'Q')
+                    piece = new Queen(col);
+                else if(ch == 'R')
+                    piece = new Rook(col);
+                else
+                    cout << "Try again. You must choose b, k, q or r : ";
+                while (getchar() != '\n');
+            }
+            return piece;
+        }            
 };
 
 short get_command(Square &s)
@@ -777,6 +823,7 @@ short get_command(Square &s)
     while(1)
     {
         cin >> command;
+        while (getchar() != '\n')
         for(short i = 0; i < command.length(); i++)
             command[i] = tolower(command[i]);
         if(command == "exit")
@@ -816,7 +863,6 @@ int main()
     Square s1('e', 2);
     Square s2('e', 4);
 
-    
     while(1)
     {
         system("clear");  
@@ -861,8 +907,7 @@ int main()
             cout << "Move canceled" << endl;
         if(ans == MOVE_FAIL)
             cout << "Invalid move" << endl;
-        getchar();
-        getchar();
+        getchar();        
     }
 
     return 0;
