@@ -514,10 +514,6 @@ class Chessboard
     public:
         Chessboard()
         {
-            for(short i = 0; i < 8; i++)
-                for(short j = 0; j < BOARD_SIZE; j++)
-                    board[i][j] = NULL;
-            
             board[0][0] = new Rook(WHITE);
             board[0][1] = new Knight(WHITE);
             board[0][2] = new Bishop(WHITE);
@@ -545,8 +541,6 @@ class Chessboard
             for(short i = 2; i < 6; i++)
                 for(short j = 0; j < BOARD_SIZE; j++)
                     board[i][j] = NULL;
-            
-            board[6][0] = new Pawn(WHITE);
             
             turn = WHITE;
             white_short_castle = true;
