@@ -510,6 +510,7 @@ class Chessboard
     bool black_long_castle;
     bool black_short_castle;
     bool white_long_castle;
+    short en_passant;
     
     public:
         Chessboard()
@@ -547,6 +548,7 @@ class Chessboard
             black_long_castle = true;
             black_short_castle = true;
             white_long_castle = true;
+            en_passant = -1;
         }
         
         unsigned short get_turn()
@@ -678,21 +680,25 @@ class Chessboard
             unsigned short y2 = s2.get_y();
             Square trajectory[8];
             unsigned short trajectory_len = 0;
+            
             if(!board[y1][x1] || board[y1][x1]->color != turn)
                 return MOVE_FAIL;
+            
             if(trajectory_len = board[y1][x1]->get_trajectory(s1, s2, trajectory))
             {
                 if(dynamic_cast<Pawn*>(board[y1][x1]))
                 {
-                    if(x2 != x1 && board[y2][x2] == NULL)
+                    if(x2 != x1 && board[y2][x2] == NULL && !is_en_passant(s1, s2))
                         return MOVE_FAIL;
                     if(x1 == x2 && board[y2][x2])
                         return MOVE_FAIL;
                 }
+                
                 if(trajectory_len == 1)
                     return MOVE_CANCEL;
                 if(board[y2][x2] && board[y1][x1]->color == board[y2][x2]->color)
                     return MOVE_FAIL;
+                
                 for(short i = 1; i < trajectory_len - 1; i++)
                 {
                     if(board[trajectory[i].get_y()][trajectory[i].get_x()] != NULL)
@@ -700,6 +706,7 @@ class Chessboard
                         return MOVE_FAIL;
                     }
                 }
+                
                 board[y1][x1]->get_name();
                 cout << " ";
                 s1.print();
@@ -710,7 +717,14 @@ class Chessboard
                     cout << " capture ";
                     board[y2][x2]->get_name();
                 }
-                cout << endl;
+                else if(is_en_passant(s1, s2))
+                {
+                    cout << " capture "; 
+                    board[y1][x2]->get_name();
+                    cout << " en passant";
+                }
+                cout << endl; 
+                
                 if(board[y1][x1] == board[0][4] || board[y2][x2] == board[0][4])
                 {
                     white_short_castle = false;
@@ -728,9 +742,18 @@ class Chessboard
                 if(board[y1][x1] == board[7][0] || board[y2][x2] == board[7][0])
                     black_long_castle = false;
                 if(board[y1][x1] == board[7][7] || board[y2][x2] == board[7][7])
-                    black_short_castle = false;               
+                    black_short_castle = false; 
+                
+                if(is_en_passant(s1,s2))
+                    board[y1][x2] = NULL;
                 board[y2][x2] = board[y1][x1];
                 board[y1][x1] = NULL;
+                
+                if(dynamic_cast<Pawn*>(board[y2][x2]) && abs(y2 - y1) == 2)
+                    en_passant = x1;
+                else
+                    en_passant = -1;                    
+                
                 if(dynamic_cast<Pawn*>(board[y2][x2]) && y2 == 7 && board[y2][x2]->color == WHITE)
                 {
                    board[y2][x2] = promote(WHITE);
@@ -743,10 +766,12 @@ class Chessboard
                    cout << "Black Pawn promoted to ";
                    board[y2][x2]->get_name();
                 }
+                
                 if(turn == WHITE)
                     turn = BLACK;
                 else
                     turn = WHITE;
+                
                 return MOVE_SUCCESS;
             }
             return MOVE_FAIL;
@@ -807,6 +832,23 @@ class Chessboard
                 while (getchar() != '\n');
             }
             return piece;
+        }
+
+        bool is_en_passant(Square s1, Square s2)
+        {
+            unsigned short x1 = s1.get_x();
+            unsigned short y1 = s1.get_y();
+            unsigned short x2 = s2.get_x();
+            unsigned short y2 = s2.get_y();
+            if(!dynamic_cast<Pawn*>(board[y1][x1]))
+                return false;
+            if(abs(x2 - x1) != 1 || en_passant != x2)
+                return false;
+            if(board[y1][x1]->color == WHITE && (y2 != 5 || y1 != 4))
+                return false;
+            if(board[y1][x1]->color == BLACK && (y2 != 2 || y1 != 3))
+                return false;
+            return true;
         }            
 };
 
